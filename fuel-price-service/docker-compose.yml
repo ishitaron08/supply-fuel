@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # ── Node.js API ──────────────────────────────
+  api:
+    build: .
+    container_name: fuel-price-api
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/fuel_price_db
+    depends_on:
+      - mongo
+    networks:
+      - fuel-net
+
+  # ── MongoDB ──────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: fuel-price-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - fuel-net
+
+networks:
+  fuel-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
